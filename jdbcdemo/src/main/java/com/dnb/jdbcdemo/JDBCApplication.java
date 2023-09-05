@@ -27,6 +27,7 @@ public class JDBCApplication {
 		
 		Scanner sc = new Scanner(System.in);
 		while(true) {
+			System.out.println("Hello World");
 			System.out.println("---------------------------------------------------------");
 			System.out.println("1.Create Account\n2.Get Account Details by ID\n3. Delete Account Details by ID");
 			System.out.println();
@@ -69,6 +70,7 @@ public class JDBCApplication {
 				System.out.println("Please choice a proper option");
 			}
 		}	
+		
 		
 	}
 
