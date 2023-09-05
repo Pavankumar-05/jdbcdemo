@@ -2,15 +2,34 @@ package com.dnb.jdbcdemo;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 import java.util.Optional;
 import java.util.Scanner;
 
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+
+import com.dnb.jdbcdemo.config.Config;
 import com.dnb.jdbcdemo.dto.Account;
-import com.dnb.jdbcdemo.service.AccountServiceImpl;
+import com.dnb.jdbcdemo.service.AccountService;
 
 public class JDBCApplication {
 
+	
+	static Scanner sc = new Scanner(System.in);
+	
 	public static void main(String[] args) {
+		
+
+		ApplicationContext applicationContext = new AnnotationConfigApplicationContext(Config.class);
+		
+//		DBUtils dbUtils = applicationContext.getBean(DBUtils.class);
+		
+		AccountService accountService = applicationContext.getBean(AccountService.class);
+		
+//		Optional<Connection> connection = dbUtils.getConnection();
+//		System.out.println(connection.get()!=null);
+		
 		
 		Account account = new Account();
 		account.setAccountId("1234567890");
@@ -25,11 +44,10 @@ public class JDBCApplication {
 		
 //		System.out.println(AccountServiceImpl.getInstance().createAccount(account));
 		
-		Scanner sc = new Scanner(System.in);
 		while(true) {
-			System.out.println("Hello World");
+			//System.out.println("Hello World");
 			System.out.println("---------------------------------------------------------");
-			System.out.println("1.Create Account\n2.Get Account Details by ID\n3. Delete Account Details by ID");
+			System.out.println("1.Create Account\n2.Get Account Details by ID\n3. Delete Account Details by ID\n4. Print all the Records");
 			System.out.println();
 			System.out.print("Enter your Choice: ");
 			int value = sc.nextInt();
@@ -39,14 +57,14 @@ public class JDBCApplication {
 			case 1:
 				System.out.println("---------------------------------------------------------");
 				Account account1 = getInput();
-				System.out.println(AccountServiceImpl.getInstance().createAccount(account1));
+				System.out.println(accountService.createAccount(account1));
 				
 				break;
 			case 2:
 				System.out.println("---------------------------------------------------------");
 				System.out.println("Enter the account id:");
 				String accountNumber = sc.next();
-				Optional<Account> returnAccount = AccountServiceImpl.getInstance().getAccountById(accountNumber);
+				Optional<Account> returnAccount = accountService.getAccountById(accountNumber);
 				System.out.println(returnAccount);
 				break;
 				
@@ -54,17 +72,21 @@ public class JDBCApplication {
 				System.out.println("---------------------------------------------------------");
 				System.out.println("Enter the account id:");
 				String accountNumber1 = sc.next();
-				System.out.println(AccountServiceImpl.getInstance().deleteAccount(accountNumber1));
+				System.out.println(accountService.deleteAccount(accountNumber1));
 				break;
 				
 			case 4:
 				System.out.println("---------------------------------------------------------");
-				System.out.println(AccountServiceImpl.getInstance().getAllAccounts());
+				List<Account> accounts = accountService.getAllAccounts();
+				//System.out.println(accountService.getAllAccounts());
+				for(int i=0;i<accounts.size();i++)
+					System.out.println(accounts.get(i));
+				break;
 				
 			case 5:
 				sc.close();
 				System.exit(0);
-				break;
+
 			
 				default:
 				System.out.println("Please choice a proper option");
@@ -76,7 +98,7 @@ public class JDBCApplication {
 
 	private static Account getInput() {
 		// Taking input from the user
-		Scanner sc = new Scanner(System.in);
+		//Scanner sc = new Scanner(System.in);
 		System.out.println("Enter your Account ID: ");
 		String accountId = sc.next();
 		System.out.println("Enter your AccountHolder Name: ");
@@ -107,7 +129,6 @@ public class JDBCApplication {
 		account.setAccountCreatedDate(LocalDate.now());
 		account.setDob(date);
 		
-		sc.close();
 		
 		return account;
 		
