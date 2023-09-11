@@ -5,17 +5,20 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
 import java.util.Scanner;
+
 import javax.naming.InvalidNameException;
-import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ApplicationContext;
+
 import com.dnb.jdbcdemo.dto.Account;
 import com.dnb.jdbcdemo.dto.Customer;
 import com.dnb.jdbcdemo.exceptions.IdNotFoundException;
 import com.dnb.jdbcdemo.exceptions.InvalidContactNumberException;
 import com.dnb.jdbcdemo.exceptions.InvalidDateException;
 import com.dnb.jdbcdemo.service.AccountService;
+import com.dnb.jdbcdemo.service.CustomerService;
 
 @SpringBootApplication // component scan, properties source
 public class JdbcdemoApplication {
@@ -25,7 +28,16 @@ public class JdbcdemoApplication {
 	public static void main(String[] args) {
 		// creates application context object
 		ApplicationContext applicationContext = SpringApplication.run(JdbcdemoApplication.class, args);
-		accountService = applicationContext.getBean(AccountService.class);
+		accountService = applicationContext.getBean(AccountService.class); 
+		CustomerService customerService = applicationContext.getBean(CustomerService.class);
+		try {
+			customerService.createCustomer(new Customer(1009, "Charls Darwin", "6547389210", "Hyderabad", "TYRUEIWOQP", "YTURIEOWPQ"));
+		}
+		catch(IdNotFoundException e) {
+			System.out.println(e.getMessage());
+		}
+		System.exit(0);;
+		//applicationContext.getBean(AccountService.class).getAllAccounts().forEach(e->System.out.println(e));
 		Scanner scan = new Scanner(System.in);
 		while (true) {
 			System.out.println("1.CreateAccount\n2.Get Account\n3.Get All Accounts\n4.delete account\n5.exit");
@@ -77,7 +89,7 @@ public class JdbcdemoApplication {
 		try {
 			Customer customer = new Customer(1009, "Charls Darwin", "6547389210", "Hyderabad", "TYRUEIWOQP", "YTURIEOWPQ");
 			Account account = new Account(accountId, name, accountType, balance, contact, address, LocalDate.now(),
-					localDate, true, customer);
+					localDate, true, customer.getCustomerId());
 
 			System.out.println(accountService.createAccount(account));
 		} catch (IdNotFoundException e) {
@@ -89,7 +101,7 @@ public class JdbcdemoApplication {
 		} catch (InvalidContactNumberException e) {
 			e.printStackTrace();
 		}
-		scan.close();
+		
 	}
 
 	public static void getAccount() {
@@ -101,7 +113,7 @@ public class JdbcdemoApplication {
 			System.out.println(returnedAccount.get());
 		else
 			System.out.println("Account not found..");
-		scan.close();
+		//scan.close();
 	}
 
 	public static void getAllAccounts() {
@@ -113,12 +125,18 @@ public class JdbcdemoApplication {
 		Scanner scan = new Scanner(System.in);
 		System.out.println("Enter account Id to be deleted:");
 		String id = scan.next();
-		boolean result = accountService.deleteAccountById(id);
-		if (result)
-			System.out.println("Account with Id " + id + " is deleted.");
-		else
-			System.out.println("Account Id not found..");
-		scan.close();
+		try {
+			boolean result = accountService.deleteAccountById(id);
+			if(result)
+				System.out.println("Deleted Successfully!!!");
+			else
+				System.out.println("Couldn't Happen");
+		} catch (IdNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		//scan.close();
 	}
 
 }

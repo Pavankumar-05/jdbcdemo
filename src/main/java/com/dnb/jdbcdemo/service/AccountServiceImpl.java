@@ -13,40 +13,83 @@ import com.dnb.jdbcdemo.exceptions.IdNotFoundException;
 import com.dnb.jdbcdemo.repo.AccountRepository;
 import com.dnb.jdbcdemo.repo.CustomerRepository;
 
-@Service("accountServiceImpl")
+@Service
 public class AccountServiceImpl implements AccountService {
-
 	@Autowired
-	AccountRepository accountRepository;
-
+	private AccountRepository accountRepository;
 	@Autowired
-	CustomerRepository customerRepository;
+	private CustomerRepository customerRepository;
 
 	@Override
 	public Account createAccount(Account account) throws IdNotFoundException {
-
-		Optional<Customer> optional = customerRepository.getCustomerById(account.getCustomer().getCustomerId());
-		if (optional.isPresent())
-			return accountRepository.createAccount(account);
-		else
-			throw new IdNotFoundException("customer not found");
-	}
-
-	@Override
-	public boolean deleteAccountById(String accountId) {
-		return accountRepository.deleteAccountById(accountId);
+		// TODO Auto-generated method stub
+		
+			return accountRepository.save(account);
 
 	}
 
 	@Override
 	public Optional<Account> getAccountById(String accountId) {
+		// TODO Auto-generated method stub
+		return accountRepository.findById(accountId);
+	}
 
-		return accountRepository.getAccountById(accountId);
+	@Override
+	public boolean deleteAccountById(String accountId) throws IdNotFoundException {
+		// TODO Auto-generated method stub
+		boolean isPresent = accountRepository.existsById(accountId);
+		if(isPresent) {
+			accountRepository.deleteById(accountId);
+			
+		}else {
+			throw new IdNotFoundException("Id not Found");
+		}
+		if(accountRepository.existsById(accountId))
+			return false;
+		else
+			return true;
+		 
 	}
 
 	@Override
 	public List<Account> getAllAccounts() {
-		return accountRepository.getAllAccounts();
+		// TODO Auto-generated method stub
+		return (List<Account>) accountRepository.findAll();
 	}
+	
+	
+
+//	@Autowired
+//	AccountRepository accountRepository;
+//
+//	@Autowired
+//	CustomerRepository customerRepository;
+//
+//	@Override
+//	public Account createAccount(Account account) throws IdNotFoundException {
+//
+//		Optional<Customer> optional = customerRepository.getCustomerById(account.getCustomerId());
+//		if (optional.isPresent())
+//			return accountRepository.createAccount(account);
+//		else
+//			throw new IdNotFoundException("customer not found");
+//	}
+//
+//	@Override
+//	public boolean deleteAccountById(String accountId) {
+//		return accountRepository.deleteAccountById(accountId);
+//
+//	}
+//
+//	@Override
+//	public Optional<Account> getAccountById(String accountId) {
+//
+//		return accountRepository.getAccountById(accountId);
+//	}
+//
+//	@Override
+//	public List<Account> getAllAccounts() {
+//		return accountRepository.getAllAccounts();
+//	}
 
 }

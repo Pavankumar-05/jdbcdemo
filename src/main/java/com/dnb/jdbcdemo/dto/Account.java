@@ -2,19 +2,32 @@ package com.dnb.jdbcdemo.dto;
 
 import java.time.LocalDate;
 import java.util.regex.Pattern;
+
 import javax.naming.InvalidNameException;
+
 import com.dnb.jdbcdemo.exceptions.InvalidContactNumberException;
 import com.dnb.jdbcdemo.exceptions.InvalidDateException;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Transient;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.ToString;
+
+//dialect ->handles the mapping 
 @Getter
 @EqualsAndHashCode
 @NoArgsConstructor
-@ToString(exclude = "customer")
+//@ToString(exclude = "customer")
+
+@Entity //Whenever we will create any ORM mapping things every table or entity must have 1 primary key
+
 public class Account {
+	@Id
 	private String accountId;
+	@Column(nullable = false)
 	private String accountHolderName;
 	private String accountType;
 	private float balance;
@@ -22,11 +35,13 @@ public class Account {
 	private String address;
 	private LocalDate accountCreatedDate = LocalDate.now();
 	private LocalDate dob;
+	//@Transient //skips the particular field at the tym of creating a table
 	private boolean accountStatus = true;
-	private Customer customer;
+	private int customerId;
+	//private Customer customer;
 
 	public Account(String accountId, String accountHolderName, String accountType, float balance, String contactNumber,
-			String address, LocalDate accountCreatedDate, LocalDate dob, boolean accountStatus, Customer customer)
+			String address, LocalDate accountCreatedDate, LocalDate dob, boolean accountStatus, int customerId)
 			throws InvalidNameException, InvalidDateException, InvalidContactNumberException {
 		super();
 		this.setAccountId(accountId);
@@ -37,7 +52,7 @@ public class Account {
 		this.setContactNumber(contactNumber);
 		this.setDob(dob);
 		this.setAccountType(accountType);
-		this.setCustomer(customer);
+		this.setCustomerId(customerId);
 	}
 
 	public void setAccountId(String accountId) {
@@ -92,8 +107,17 @@ public class Account {
 	public void setAccountStatus(boolean accountStatus) {
 		this.accountStatus = accountStatus;
 	}
-	public void setCustomer(Customer customer) {
-		this.customer = customer;
+	public void setCustomerId(int customerId) {
+		this.customerId = customerId;
 	}
+
+	@Override
+	public String toString() {
+		return "Account [accountId=" + accountId + ", accountHolderName=" + accountHolderName + ", accountType="
+				+ accountType + ", balance=" + balance + ", contactNumber=" + contactNumber + ", address=" + address
+				+ ", accountCreatedDate=" + accountCreatedDate + ", dob=" + dob + ", accountStatus=" + accountStatus
+				+ ", customerId=" + customerId + "]";
+	}
+	
 
 }
