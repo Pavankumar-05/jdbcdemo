@@ -1,39 +1,77 @@
 package com.dnb.jdbcdemo.dto;
 
 import java.time.LocalDate;
-import java.util.regex.Pattern;
 
-import javax.naming.InvalidNameException;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
+import org.hibernate.validator.constraints.Length;
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.format.annotation.DateTimeFormat.ISO;
 
-import com.dnb.jdbcdemo.exceptions.InvalidContactNumberException;
-import com.dnb.jdbcdemo.exceptions.InvalidDateException;
+import com.dnb.jdbcdemo.utils.DatePrefixedSequenceIdGenerator;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.Transient;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
+import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.NonNull;
 
 //dialect ->handles the mapping 
 @Getter
 @EqualsAndHashCode
 @NoArgsConstructor
 //@ToString(exclude = "customer")
-
+@Data
 @Entity //Whenever we will create any ORM mapping things every table or entity must have 1 primary key
 
 public class Account {
+	
+	
+
 	@Id
+	@NotBlank(message = "Account Id shouldn't be blank!")
+	//@GeneratedValue(strategy = GenerationType.AUTO) for int or long
+	//@UuidGenerator
+	@GeneratedValue(strategy = GenerationType.SEQUENCE,generator = "account_seq")
+//	@GenericGenerator(name = "account_seq",
+//					  strategy = "com.dnb.jdbcdemo.utils.CustomAccountIdGenerator",
+//					  parameters = {
+//							  @Parameter(name=CustomAccountIdGenerator.INCREMENT_PARAM,value = "50"),
+//							  @Parameter(name=CustomAccountIdGenerator.VALUE_PREFIX_PARAMETER,value = "A_"),
+//							  @Parameter(name=CustomAccountIdGenerator.NUMBER_FORMAT_PARAMETER,value = "%05d")
+//							  }
+//	)
+	@GenericGenerator(name = "account_seq",
+	  strategy = "com.dnb.jdbcdemo.utils.DatePrefixedSequenceIdGenerator",
+	  parameters = {
+			  @Parameter(name=DatePrefixedSequenceIdGenerator.INCREMENT_PARAM,value = "50")
+			  }
+			)
 	private String accountId;
 	@Column(nullable = false)
+	@NotBlank(message = "Account Holder Name shouldn't be blank!")
 	private String accountHolderName;
+	
 	private String accountType;
+	@Min(value = 0,message = "Value should not be negative!")
 	private float balance;
+	@Length(min = 10,max = 10,message = "Contact Number should be of length 10")
+	@Pattern(regexp = "^[0-9]{10}$")
 	private String contactNumber;
 	private String address;
 	private LocalDate accountCreatedDate = LocalDate.now();
+	@NotNull(message = "Date must be provided")
+	@Pattern(regexp = "^(\\d{4})-(\\d{2})-(\\d{2})$")
+	//@DateTimeFormat(iso = ISO.DATE)
 	private LocalDate dob;
 	//@Transient //skips the particular field at the tym of creating a table
 	private boolean accountStatus = true;
@@ -41,82 +79,18 @@ public class Account {
 	//private Customer customer;
 
 	public Account(String accountId, String accountHolderName, String accountType, float balance, String contactNumber,
-			String address, LocalDate accountCreatedDate, LocalDate dob, boolean accountStatus, int customerId)
-			throws InvalidNameException, InvalidDateException, InvalidContactNumberException {
+			String address, LocalDate accountCreatedDate, LocalDate dob, boolean accountStatus, int customerId) {
 		super();
-		this.setAccountId(accountId);
-		this.setAccountHolderName(accountHolderName);
-		this.setAccountCreatedDate(accountCreatedDate);
-		this.setBalance(balance);
-		this.setAccountStatus(accountStatus);
-		this.setContactNumber(contactNumber);
-		this.setDob(dob);
-		this.setAccountType(accountType);
-		this.setCustomerId(customerId);
-	}
-
-	public void setAccountId(String accountId) {
 		this.accountId = accountId;
-	}
-
-	public void setAccountHolderName(String accountHolderName) throws InvalidNameException {
-		// length should be min 2 character, no chars no numbers.
-		if (Pattern.compile("^[a-zA-Z]{2,}$").matcher(accountHolderName).find())
-			this.accountHolderName = accountHolderName;
-		else {
-			throw new InvalidNameException("Name is invalid");
-		}
-	}
-
-	public void setAccountType(String accountType) {
+		this.accountHolderName = accountHolderName;
 		this.accountType = accountType;
-	}
-
-	public void setBalance(float balance) {
 		this.balance = balance;
-	}
-
-	public void setContactNumber(String contactNumber) throws InvalidContactNumberException {
-		if (Pattern.compile("^[0-9]{10}$").matcher(contactNumber).find())
-			this.contactNumber = contactNumber;
-		else {
-			throw new InvalidContactNumberException("Contact number not valid");
-		}
-	}
-
-	public void setAddress(String address) {
+		this.contactNumber = contactNumber;
 		this.address = address;
-	}
-
-	public void setAccountCreatedDate(LocalDate accountCreatedDate) throws InvalidDateException {
-		if (Pattern.compile("^\\d{4}-\\d{2}-\\d{2}$").matcher(accountCreatedDate.toString())
-				.find())
-			this.accountCreatedDate = accountCreatedDate;
-		else {
-			throw new InvalidDateException("Date is invalid");
-		}
-	}
-
-	public void setDob(LocalDate dob) throws InvalidDateException {
-		if (Pattern.compile("^\\d{4}-\\d{2}-\\d{2}").matcher(dob.toString()).find())
-			this.dob = dob;
-		else {
-			throw new InvalidDateException("Date is invalid");
-		}
-	}
-	public void setAccountStatus(boolean accountStatus) {
+		this.accountCreatedDate = accountCreatedDate;
+		this.dob = dob;
 		this.accountStatus = accountStatus;
-	}
-	public void setCustomerId(int customerId) {
 		this.customerId = customerId;
-	}
-
-	@Override
-	public String toString() {
-		return "Account [accountId=" + accountId + ", accountHolderName=" + accountHolderName + ", accountType="
-				+ accountType + ", balance=" + balance + ", contactNumber=" + contactNumber + ", address=" + address
-				+ ", accountCreatedDate=" + accountCreatedDate + ", dob=" + dob + ", accountStatus=" + accountStatus
-				+ ", customerId=" + customerId + "]";
 	}
 	
 

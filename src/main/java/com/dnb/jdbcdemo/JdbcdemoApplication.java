@@ -25,20 +25,54 @@ public class JdbcdemoApplication {
 	
 	
 	static AccountService accountService;
+	static CustomerService customerService;
 	public static void main(String[] args) {
 		// creates application context object
 		ApplicationContext applicationContext = SpringApplication.run(JdbcdemoApplication.class, args);
 		accountService = applicationContext.getBean(AccountService.class); 
-		CustomerService customerService = applicationContext.getBean(CustomerService.class);
-		try {
-			customerService.createCustomer(new Customer(1009, "Charls Darwin", "6547389210", "Hyderabad", "TYRUEIWOQP", "YTURIEOWPQ"));
-		}
-		catch(IdNotFoundException e) {
-			System.out.println(e.getMessage());
-		}
-		System.exit(0);;
-		//applicationContext.getBean(AccountService.class).getAllAccounts().forEach(e->System.out.println(e));
+		customerService = applicationContext.getBean(CustomerService.class);
 		Scanner scan = new Scanner(System.in);
+//		System.out.println("enter account details:");
+//		//System.out.println("Enter accountId:");
+//		//String accountId = scan.next();
+//		System.out.println("Enter Name:");
+//		String name = scan.next();
+//		System.out.println("Enter AccountType:");
+//		String accountType = scan.next();
+//		System.out.println("Enter Balance:");
+//		float balance = scan.nextFloat();
+//		System.out.println("Enter contact Number:");
+//		String contact = scan.next();
+//		System.out.println("Enter Address:");
+//		String address = scan.next();
+//		System.out.println("Enter Date of birth in format DD/MM/YYYY:");
+//		String date = scan.next();
+//		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+//		LocalDate localDate = LocalDate.parse(date, formatter);
+//		try {
+//			Customer customer = new Customer(1009, "Charls Darwin", "6547389210", "Hyderabad", "TYRUEIWOQP", "YTURIEOWPQ");
+//			Account account = new Account();
+//			account.setAccountHolderName(name);
+//			account.setAccountStatus(true);
+//			account.setAccountType(accountType);
+//			account.setAddress(address);
+//			account.setBalance(balance);
+//			account.setContactNumber(contact);
+//			account.setDob(localDate);
+//
+//			System.out.println(accountService.createAccount(account));
+//		} catch (IdNotFoundException e) {
+//			System.out.println(e);
+//		} catch (InvalidNameException e) {
+//			e.printStackTrace();
+//		} catch (InvalidDateException e) {
+//			e.printStackTrace();
+//		} catch (InvalidContactNumberException e) {
+//			e.printStackTrace();
+//		}
+//		System.exit(0);;
+		//applicationContext.getBean(AccountService.class).getAllAccounts().forEach(e->System.out.println(e));
+		//Scanner scan = new Scanner(System.in);
 		while (true) {
 			System.out.println("1.CreateAccount\n2.Get Account\n3.Get All Accounts\n4.delete account\n5.exit");
 			System.out.println("Enter option:");
@@ -70,8 +104,8 @@ public class JdbcdemoApplication {
 	public static void createAccount() {
 		Scanner scan = new Scanner(System.in);
 		System.out.println("enter account details:");
-		System.out.println("Enter accountId:");
-		String accountId = scan.next();
+		//System.out.println("Enter accountId:");
+		//String accountId = scan.next();
 		System.out.println("Enter Name:");
 		String name = scan.next();
 		System.out.println("Enter AccountType:");
@@ -82,23 +116,24 @@ public class JdbcdemoApplication {
 		String contact = scan.next();
 		System.out.println("Enter Address:");
 		String address = scan.next();
-		System.out.println("Enter Date of birth in format DD/MM/YYYY:");
+		System.out.println("Enter Date of birth in format yyyy/MM/dd:");
 		String date = scan.next();
-		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd");
 		LocalDate localDate = LocalDate.parse(date, formatter);
 		try {
-			Customer customer = new Customer(1009, "Charls Darwin", "6547389210", "Hyderabad", "TYRUEIWOQP", "YTURIEOWPQ");
-			Account account = new Account(accountId, name, accountType, balance, contact, address, LocalDate.now(),
-					localDate, true, customer.getCustomerId());
-
+			/*Customer customer = new Customer(1009, "Charls Darwin", "6547389210", "Hyderabad", "TYRUEIWOQP", "YTURIEOWPQ");
+			customerService.createCustomer(customer);*/
+			Account account = new Account();
+			account.setAccountHolderName(name);
+			account.setAccountStatus(true);
+			account.setAccountType(accountType);
+			account.setAddress(address);
+			account.setBalance(balance);
+			account.setContactNumber(contact);
+			account.setDob(localDate);
+			account.setCustomerId(1009);
 			System.out.println(accountService.createAccount(account));
-		} catch (IdNotFoundException e) {
-			System.out.println(e);
-		} catch (InvalidNameException e) {
-			e.printStackTrace();
-		} catch (InvalidDateException e) {
-			e.printStackTrace();
-		} catch (InvalidContactNumberException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		
