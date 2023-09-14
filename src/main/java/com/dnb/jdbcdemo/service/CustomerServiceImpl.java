@@ -21,12 +21,14 @@ package com.dnb.jdbcdemo.service;
 // 
 //package com.dnb.jdbcdemo.service;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 //import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
+import com.dnb.jdbcdemo.dto.Account;
 import com.dnb.jdbcdemo.dto.Customer;
 import com.dnb.jdbcdemo.exceptions.IdNotFoundException;
 import com.dnb.jdbcdemo.repo.AccountRepository;
@@ -72,9 +74,23 @@ public class CustomerServiceImpl implements CustomerService {
 	}
 
 	@Override
-	public Iterable<Customer> getAllCustomers() {
+	public List<Customer> getAllCustomers() {
 		// TODO Auto-generated method stub
-		return customerRepository.findAll();
+		return (List<Customer>) customerRepository.findAll();
+	}
+	
+	@Override
+	public boolean checkCustomerId(int customerId) {
+		if(customerRepository.existsById(customerId))
+			return true;
+		else
+			return false;
+	}
+	
+	@Override
+	public List<Customer> getCustomerByContactNumber(String customerContactNumber) {
+		// TODO Auto-generated method stub
+		return  customerRepository.findByCustomerContactNumber(customerContactNumber);
 	}
 
 }	

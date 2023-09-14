@@ -17,4 +17,10 @@ public interface AccountService {
 	public boolean deleteAccountById(String accountId) throws IdNotFoundException;
 
 	public List<Account> getAllAccounts();
+
+	boolean checkAccountId(String accountId);
+
+	public List<Account> getAccountByContactNumber(String contactNumber);
+
+	//public List<Account> getAllAccountsByContactNumber(String contactNumber);
 }

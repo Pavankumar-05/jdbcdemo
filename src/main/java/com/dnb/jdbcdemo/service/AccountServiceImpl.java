@@ -21,7 +21,7 @@ public class AccountServiceImpl implements AccountService {
 	private CustomerRepository customerRepository;
 
 	@Override
-	public Account createAccount(Account account) throws IdNotFoundException {
+	public Account createAccount(Account account){
 		// TODO Auto-generated method stub
 		
 			return accountRepository.save(account);
@@ -56,6 +56,22 @@ public class AccountServiceImpl implements AccountService {
 		// TODO Auto-generated method stub
 		return (List<Account>) accountRepository.findAll();
 	}
+	
+	@Override
+	public boolean checkAccountId(String accountId) {
+		if(accountRepository.existsById(accountId))
+			return true;
+		else
+			return false;
+	}
+	
+	@Override
+	public List<Account> getAccountByContactNumber(String contactNumber) {
+		// TODO Auto-generated method stub
+		return  accountRepository.findByContactNumber(contactNumber);
+	}
+	
+	
 	
 	
 
